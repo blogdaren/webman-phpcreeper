@@ -1,9 +1,7 @@
 ## 简介
 
-webman的爬山虎插件，[PHPCreeper | 爬山虎](http://www.phpcreeper.com)：让天下没有难爬的数据。
+webman的爬山虎插件，[PHPCreeper | 爬山虎](http://www.phpcreeper.com)：让爬取工作变得更加简单。
 
-* 专注于高效敏捷开发，让爬取工作变得更加简单。
-* 解决传统型PHP爬虫框架的性能和扩展瓶颈问题。
 
 ## 安装
 ```
