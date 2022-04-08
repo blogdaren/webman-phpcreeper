@@ -3,8 +3,8 @@
  * @script   Producer.php
  * @brief    wrapper for PHPCreeper.Producer
  * @author   blogdaren<blogdaren@163.com>
- * @version  1.0.0
- * @modify   2022-04-01
+ * @version  1.0.1
+ * @modify   2022-04-08
  */
 
 namespace Webman\PHPCreeper;
@@ -13,6 +13,20 @@ use PHPCreeper\Kernel\PHPCreeper;
 
 class Producer extends \PHPCreeper\Producer
 {
+    /**
+     * @brief procuder callback 
+     */
+    const CALLBACK_MAPS = [
+        'onProducerStart',
+        'onProducerStop',
+        'onProducerReload',
+    ];
+
+    /**
+     * @brief webman worker     
+     */
+    private $_worker = null;
+
     /**
      * @param    array  $config
      *
@@ -23,17 +37,10 @@ class Producer extends \PHPCreeper\Producer
         //强制使用多worker运作模式
         PHPCreeper::$isRunAsMultiWorker = true;
 
+        //必须调用
         parent::__construct($config);
 
-        $callback_maps = [
-            'onProducerStart',
-            'onProducerStop',
-            'onProducerReload',
-        ];
-
-        $this->rebindSpiderWorkerProps();
-
-        foreach($callback_maps as $callback)
+        foreach(self::CALLBACK_MAPS as $callback)
         {
             if(method_exists($this, $callback))
             {
@@ -43,30 +50,40 @@ class Producer extends \PHPCreeper\Producer
     }
 
     /**
+     * @brief    onWorkerStart  
+     *
+     * @param    object $worker
+     *
+     * @return   null
+     */
+    public function onWorkerStart($worker)
+    {
+        empty($this->_worker) && $this->_worker = $worker;
+        $this->rebindSpiderWorkerProps();
+        parent::onWorkerStart($this);
+    }
+
+    /**
      * @brief    重新绑定部分属性: InternalWorker --> SpiderWorker
      *
      * @return   object
      */
     public function rebindSpiderWorkerProps()
     {
-        $process_config = config('plugin.blogdaren.webman-phpcreeper.process');
+        $this->id = $this->_worker->id;
+        $this->setCount($this->_worker->count);
+        $this->setName($this->_worker->name);
+        $this->setServerSocketAddress($this->_worker->getSocketName());
 
+        //注意：context option需要透析配置文件单独绑定
+        $process_config = config('plugin.blogdaren.webman-phpcreeper.process');
         if(empty($process_config) || !is_array($process_config)) return $this;
 
         foreach($process_config as $name => $v)
         {
             if(!empty($v['handler']) && get_class($this) == $v['handler'])
             {
-                $this->setName($name);
-
-                if(!empty($v['count'])) 
-                {
-                    $this->setCount($v['count']);
-                }
-
-                !empty($v['listen']) && $this->setServerSocketAddress($v['listen']);
                 !empty($v['context']) && $this->setServerSocketContext($v['context']);
-
                 break;
             }
         }
