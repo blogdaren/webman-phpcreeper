@@ -3,8 +3,7 @@
  * @script   Parser.php
  * @brief    wrapper for PHPCreeper.Parser
  * @author   blogdaren<blogdaren@163.com>
- * @version  1.0.1
- * @modify   2022-04-08
+ * @create   2022-04-08
  */
 
 namespace Webman\PHPCreeper;
@@ -16,10 +15,11 @@ class Parser extends \PHPCreeper\Parser
     /**
      * @brief procuder callback 
      */
-    const CALLBACK_MAPS = [
+    public const CALLBACK_MAPS = [
         'onParserStart',
         'onParserStop',
         'onParserReload',
+        'onParserConnect',
         'onParserExtractField',
         'onParserFindUrl',
         'onParserMessage',

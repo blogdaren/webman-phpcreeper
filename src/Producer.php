@@ -3,8 +3,7 @@
  * @script   Producer.php
  * @brief    wrapper for PHPCreeper.Producer
  * @author   blogdaren<blogdaren@163.com>
- * @version  1.0.1
- * @modify   2022-04-08
+ * @create   2022-04-08
  */
 
 namespace Webman\PHPCreeper;
@@ -16,7 +15,7 @@ class Producer extends \PHPCreeper\Producer
     /**
      * @brief procuder callback 
      */
-    const CALLBACK_MAPS = [
+    public const CALLBACK_MAPS = [
         'onProducerStart',
         'onProducerStop',
         'onProducerReload',

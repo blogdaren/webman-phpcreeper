@@ -3,8 +3,7 @@
  * @script   Downloader.php
  * @brief    wrapper for PHPCreeper.Downloader
  * @author   blogdaren<blogdaren@163.com>
- * @version  1.0.1
- * @modify   2022-04-08
+ * @create   2022-04-08
  */
 
 namespace Webman\PHPCreeper;
@@ -16,10 +15,11 @@ class Downloader extends \PHPCreeper\Downloader
     /**
      * @brief procuder callback 
      */
-    const CALLBACK_MAPS = [
+    public const CALLBACK_MAPS = [
         'onBeforeDownload',
         'onStartDownload',
         'onAfterDownload',
+        'onFailDownload',
         'onDownloaderMessage',
         'onDownloaderReload',
         'onDownloaderStart',

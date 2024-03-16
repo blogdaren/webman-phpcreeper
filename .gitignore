@@ -1,0 +1,11 @@
+*.log
+*.lock
+*.pid
+*.sh
+.idea
+.buildpath
+.project
+.settings
+.DS_Store
+logs
+vendor
