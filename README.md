@@ -3,6 +3,10 @@
 webman的爬山虎插件，[PHPCreeper | 爬山虎](https://github.com/blogdaren/PHPCreeper)：让爬取工作变得更加简单高效。
 
 
+## 更新
+本插件的使用说明最近一次更新时间是：2024-03-21，由于爬山虎迭代版新增了许多新特性和API，而且完全向下兼容，所以建议将本插件和爬山虎引擎更新到最新版。
+
+
 ## 安装
 ```
 composer require blogdaren/webman-phpcreeper
@@ -24,7 +28,7 @@ composer require blogdaren/webman-phpcreeper
 
 1、创建爬虫目录：app/spider    
 
-2、创建生产器句柄类文件 app/spider/Myproducer.php
+2、创建生产器句柄类文件：app/spider/Myproducer.php
 
 ```php
 <?php 
@@ -169,7 +173,7 @@ class Myproducer extends \Webman\PHPCreeper\Producer
 
 ```
 
-3、创建下载器句柄类文件 app/spider/Mydownloader.php
+3、创建下载器句柄类文件：app/spider/Mydownloader.php
 ```php
 <?php 
 /**
@@ -276,7 +280,7 @@ class Mydownloader extends \Webman\PHPCreeper\Downloader
 }
 ```
 
-4、创建解析器句柄类文件 app/spider/Myparser.php
+4、创建解析器句柄类文件：app/spider/Myparser.php
 ```php
 <?php 
 /**
@@ -406,7 +410,6 @@ return [
 * 目前需要手动设置下载器的$downloader->setClientSocketAddress([]);
 * 依赖redis服务，所以务必启动redis-server;
 * 按照规范每一个独立的容器实例最好对应唯一的一个Handler;
-* 爬山虎新版新增了许多新特性和API，而且完全向下兼容，所以建议将本插件和爬山虎更新到最新版。
 
 
 ## 爬山虎技术文档
