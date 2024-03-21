@@ -1,6 +1,6 @@
 ## 简介
 
-webman的爬山虎插件，[PHPCreeper | 爬山虎](https://github.com/blogdaren/PHPCreeper)：让爬取工作变得更加简单。
+webman的爬山虎插件，[PHPCreeper | 爬山虎](https://github.com/blogdaren/PHPCreeper)：让爬取工作变得更加简单高效。
 
 
 ## 安装
@@ -18,18 +18,21 @@ composer require blogdaren/webman-phpcreeper
 
 ## 举个例子
 
-> 模拟需求是抓取未来7天内北京的天气预报 
+模拟抓取未来3天内北京的天气预报 
+
+## 开发步骤
 
 1、创建爬虫目录：app/spider    
 
 2、创建生产器句柄类文件 app/spider/Myproducer.php
-```
+
+```php
 <?php 
 /**
  * @script   Myproducer.php
  * @brief    生产器Handler
  * @author   blogdaren<blogdaren@163.com>
- * @modify   2022-04-01
+ * @create   2022-04-01
  */
 
 namespace app\spider;
@@ -40,23 +43,21 @@ use PHPCreeper\Crontab;
 class Myproducer extends \Webman\PHPCreeper\Producer
 {
     /**
-     * @brief   抓取未来7天内北京的天气预报
+     * @brief   生产任务
      *
      * @return  mixed 
      */
     public function makeTask()
     {   
-        //注意：这里说的版本并不是爬山虎插件的版本，而是爬山虎引擎的版本.
-        //注意：这里说的版本并不是爬山虎插件的版本，而是爬山虎引擎的版本.
-        //注意：这里说的版本并不是爬山虎插件的版本，而是爬山虎引擎的版本.
-
+        //注意：本方法中所说的版本并不是webman爬山虎插件的版本，而是爬山虎的版本.
+        //注意：本方法中所说的版本并不是webman爬山虎插件的版本，而是爬山虎的版本.
+        //注意：本方法中所说的版本并不是webman爬山虎插件的版本，而是爬山虎的版本.
 
         //在v1.6.0之前，爬山虎主要使用OOP风格的API来创建任务：
         //$producer->newTaskMan()->setXXX()->setXXX()->createTask()
         //$producer->newTaskMan()->setXXX()->setXXX()->createTask($task)
         //$producer->newTaskMan()->setXXX()->setXXX()->createMultiTask()
         //$producer->newTaskMan()->setXXX()->setXXX()->createMultiTask($task)
-
 
         //自v1.6.0开始，爬山虎提供了更加短小便捷的API来创建任务, 而且参数类型更加丰富：
         //注意：仅仅只是扩展，原有的API依然可以正常使用，提倡扩展就是为了保持向下兼容。
@@ -65,29 +66,59 @@ class Myproducer extends \Webman\PHPCreeper\Producer
         //2. 多任务API：$task参数类型可支持：[字符串 | 一维数组 | 二维数组]
         //2. 多任务API：$producer->createMultiTask($task);
 
-
         //使用字符串：不推荐使用，配置受限，需要自行处理抓取结果
         //$task = "http://www.weather.com.cn/weather/101010100.shtml";
         //$producer->createTask($task);
         //$producer->createMultiTask($task);
+
+        //任务私有context，其上下文成员与全局context完全相同，最终会采用合并覆盖策略
+        $task_private_context = array(
+            //是否缓存下载数据(可选项，默认false)
+            'cache_enabled'   => true,
+            //缓存下载数据存放目录  (可选项，默认位于系统临时目录下)
+            'cache_directory' => sys_get_temp_dir() . '/DownloadCache4PHPCreeper/',
+            //在特定的生命周期内是否允许重复抓取同一个URL资源（可选项，默认false）
+            'allow_url_repeat' => true,
+            //要不要跟踪完整的HTTP请求参数，开启后终端会显示完整的请求参数 [默认false]
+            'track_request_args' => true,  
+            //要不要跟踪完整的TASK数据包，开启后终端会显示完整的任务数据包 [默认false]
+            'track_task_package' => true,
+            //在v1.6.0之前，如果rulename留空，默认会使用 md5($task_url)作为rulename
+            //自v1.6.0开始，如果rulename留空，默认会使用 md5($task_id) 作为rulename
+            //所以这个配置参数是仅仅为了保持向下兼容，但是不推荐使用，因为有潜在隐患
+            //换句话如果使用的是v1.6.0之前旧版本，那么才有可能需要激活本参数 [默认false]
+            'force_use_md5url_if_rulename_empty' => false,
+            //强制使用多任务创建API的旧版本参数风格，保持向下兼容，不再推荐使用 [默认false]
+            'force_use_old_style_multitask_args' => false,
+            //cookies成员的配置格式和guzzle官方不大一样，屏蔽了cookieJar，取值[false|array]
+            'cookies' => [
+                //'domain' => 'domain.com',
+                //'k1' => 'v1',
+                //'k2' => 'v2',
+            ],  
+            //除了内置参数之外，还可以自由配置自定义参数，在上下游业务链应用场景中十分有用
+            'user_define_arg1' => 'user_define_value1',
+            'user_define_arg2' => 'user_define_value2',
+            //更多参数请参看手册
+        );
 
 
         $task = array(
             'active' => true,       //是否激活当前任务，只有配置为false才会冻结任务，默认true
             'url'    => 'http://www.weather.com.cn/weather/101010100.shtml',
             "rule" => array(        //如果该字段留空默认将返回原始下载数据
-                'time' => ['div#7d ul.t.clearfix h1',      'text', [], 'function($field_name, $data){
-                    return "具体日子: " . $data;
+                '日子' => ['div#7d ul.t.clearfix h1',      'text', [], 'function($field_name, $data){
+                    return  date("Y-m-d") . " | " . $data;
                 }'],                //关于回调字符串的用法务必详看官方手册
-                'wea'  => ['div#7d ul.t.clearfix p.wea',   'text'],
-                'tem'  => ['div#7d ul.t.clearfix p.tem',   'text'],
-            ), 
+                '天气'  => ['div#7d ul.t.clearfix p.wea',   'text'],
+                '温度'  => ['div#7d ul.t.clearfix p.tem',   'text'],
+            ),
             'rule_name' =>  '',     //如果留空将使用md5($task_id)作为规则名
             'refer'     =>  '',
             'type'      =>  'text', //可以自由设定类型
             'method'    =>  'get',
-            'context'   =>  $context??[], //任务私有context，其上下文成员与全局context完全相同，最终会采用合并覆盖策略
-        );  
+            'context'   =>  $task_private_context, //任务私有context，其上下文成员与全局context完全相同，最终会采用合并覆盖策略
+        );
 
         $this->createTask($task);
     }  
@@ -139,7 +170,7 @@ class Myproducer extends \Webman\PHPCreeper\Producer
 ```
 
 3、创建下载器句柄类文件 app/spider/Mydownloader.php
-```
+```php
 <?php 
 /**
  * @script   Mydownloader.php
@@ -246,7 +277,7 @@ class Mydownloader extends \Webman\PHPCreeper\Downloader
 ```
 
 4、创建解析器句柄类文件 app/spider/Myparser.php
-```
+```php
 <?php 
 /**
  * @script   Myparser.php
@@ -330,12 +361,12 @@ class Myparser extends \Webman\PHPCreeper\Parser
      */
     public function onParserExtractField($parser, $download_data, $fields)
     {
-        !empty($fields) && pprint($fields, __METHOD__);
+        !empty($fields) && pprint($fields[$parser->task['rule_name']]);
     }
 }
 ```
 5、修改插件的process配置文件设置对应的Handler
-```
+```php
 <?php
 use app\spider\Myproducer;
 use app\spider\Mydownloader;
@@ -375,8 +406,7 @@ return [
 * 目前需要手动设置下载器的$downloader->setClientSocketAddress([]);
 * 依赖redis服务，所以务必启动redis-server;
 * 按照规范每一个独立的容器实例最好对应唯一的一个Handler;
-* ~~目前Debug界面第5列数据【即进程编号列】显示有异常，待有结果了再来更新下，不过对抓取业务没有任何影响;~~     
-  **【已经解决：版本需要更新到 >=1.01】**
+* 爬山虎新版新增了许多新特性和API，而且完全向下兼容，所以建议将本插件和爬山虎更新到最新版。
 
 
 ## 爬山虎技术文档
