@@ -65,6 +65,10 @@ return array(
             'user_define_arg1' => 'user_define_value1',
             'user_define_arg2' => 'user_define_value2',
         ),
+        //无头浏览器，如果是动态页面考虑启用，否则应当禁用 [默认使用chrome且为禁用状态]
+        'headless_browser' => [
+            'headless' => false, 
+        ],
    ),
 );
 

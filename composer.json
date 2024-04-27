@@ -1,10 +1,22 @@
 {
   "name": "blogdaren/webman-phpcreeper",
   "type": "library",
-  "description": "phpcreeper plugin for webman",
+  "keywords": ["spider", "crawler", "multi-process", "event-loop", "async", "headless"],
+  "homepage": "http://www.phpcreeper.com",
+  "description": "PHPCreeper plugin for webman",
   "license": "MIT",
+  "authors": [
+      {   
+          "name": "blogdaren",
+          "email": "blogdaren@163.com"
+      }   
+  ],
+  "support": {
+      "wiki": "http://www.phpcreeper.com/docs/",
+      "source": "https://github.com/blogdaren/webman-phpcreeper"
+  },
   "require": {
-      "blogdaren/phpcreeper": "^1.3"
+      "blogdaren/phpcreeper": ">=1.3"
   },
   "autoload": {
     "psr-4": {

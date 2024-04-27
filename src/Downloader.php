@@ -24,6 +24,8 @@ class Downloader extends \PHPCreeper\Downloader
         'onDownloaderReload',
         'onDownloaderStart',
         'onDownloaderStop',
+        'onTaskEmpty',
+        'onHeadlessBrowserOpenPage',
     ];
 
     /**

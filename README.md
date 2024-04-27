@@ -4,7 +4,8 @@ webman的爬山虎插件，[PHPCreeper | 爬山虎](https://github.com/blogdaren
 
 
 ## 更新
-本插件的使用说明最近一次更新时间是：2024-03-21，由于爬山虎迭代版新增了许多新特性和API，而且完全向下兼容，所以建议将本插件和爬山虎引擎更新到最新版。
+* 本插件的使用说明最近一次更新时间是：**2024-04-27**，由于爬山虎迭代版新增了许多新特性和API，而且完全向下兼容，所以建议将本插件和爬山虎引擎更新到最新版。
+* 重大更新：自**爬山虎v1.8.7版本**开始，爬山虎已经支持无头浏览器即支持运行JavaScript代码及其渲染的动态页面。使用非常简单，无缝切换，只需要通过$context上下文启用或禁用无头浏览器开关即可。
 
 
 ## 安装
@@ -18,7 +19,8 @@ composer require blogdaren/webman-phpcreeper
 * 由于爬虫应用相对WEB应用而言比较独立，所以app内的爬虫目录结构建议自行独立部署。
 * 首先在自己的app项目下手动创建有效的爬虫目录, 比如：app/spider。
 * 然后在爬虫目录内(app/spider)创建相应的容器句柄类Hanlder。
-* 最后在对应容器内的`onXXXX`回调方法内编写业务逻辑.
+* 最后在对应容器内的`onXXXX`回调方法内编写业务逻辑。
+* 若启用无头开关，默认使用无头chrome驱动，否则使用默认的guzzle驱动，若爬取的不是动态页，建议禁用。
 
 ## 举个例子
 
@@ -66,9 +68,9 @@ class Myproducer extends \Webman\PHPCreeper\Producer
         //自v1.6.0开始，爬山虎提供了更加短小便捷的API来创建任务, 而且参数类型更加丰富：
         //注意：仅仅只是扩展，原有的API依然可以正常使用，提倡扩展就是为了保持向下兼容。
         //1. 单任务API：$task参数类型可支持：[字符串 | 一维数组]
-        //1. 单任务API：$producer->createTask($task);
-        //2. 多任务API：$task参数类型可支持：[字符串 | 一维数组 | 二维数组]
-        //2. 多任务API：$producer->createMultiTask($task);
+        //2. 单任务API：$producer->createTask($task);
+        //3. 多任务API：$task参数类型可支持：[字符串 | 一维数组 | 二维数组]
+        //4. 多任务API：$producer->createMultiTask($task);
 
         //使用字符串：不推荐使用，配置受限，需要自行处理抓取结果
         //$task = "http://www.weather.com.cn/weather/101010100.shtml";
@@ -76,7 +78,7 @@ class Myproducer extends \Webman\PHPCreeper\Producer
         //$producer->createMultiTask($task);
 
         //任务私有context，其上下文成员与全局context完全相同，最终会采用合并覆盖策略
-        $task_private_context = array(
+        $private_task_context = array(
             //是否缓存下载数据(可选项，默认false)
             'cache_enabled'   => true,
             //缓存下载数据存放目录  (可选项，默认位于系统临时目录下)
@@ -103,6 +105,10 @@ class Myproducer extends \Webman\PHPCreeper\Producer
             //除了内置参数之外，还可以自由配置自定义参数，在上下游业务链应用场景中十分有用
             'user_define_arg1' => 'user_define_value1',
             'user_define_arg2' => 'user_define_value2',
+            //无头浏览器，如果是动态页面考虑启用，否则应当禁用 [默认使用chrome且为禁用状态]
+            'headless_browser' => [
+                'headless' => false, 
+            ],
             //更多参数请参看手册
         );
 
@@ -121,7 +127,7 @@ class Myproducer extends \Webman\PHPCreeper\Producer
             'refer'     =>  '',
             'type'      =>  'text', //可以自由设定类型
             'method'    =>  'get',
-            'context'   =>  $task_private_context, //任务私有context，其上下文成员与全局context完全相同，最终会采用合并覆盖策略
+            'context'   =>  $private_task_context, //任务私有context，其上下文成员与全局context完全相同，最终会采用合并覆盖策略
         );
 
         $this->createTask($task);
@@ -276,6 +282,42 @@ class Mydownloader extends \Webman\PHPCreeper\Downloader
     public function onAfterDownload($downloader, $download_data, $task)
     {
         //pprint($downloader->getDbo('test'), __METHOD__);
+    }
+
+    /**
+     * @brief    onTaskEmpty    
+     *
+     * @param    object  $downloader
+     *
+     * @return   mixed
+     */
+    public function onTaskEmpty($downloader)
+    {
+        //$downloader->createTask($task);
+    }
+
+    /**
+     * @brief    onHeadlessBrowserOpenPage  
+     *
+     * @param    object  $downloader
+     * @param    object  $browser
+     * @param    object  $page
+     * @param    string  $url
+     *
+     * @return   mixed
+     */
+    public function onHeadlessBrowserOpenPage($downloader, $browser, $page, $url)
+    {
+        //注意：灵活设计特定类型的返回值有助于对付各种复杂的应用场景
+        //1. 返回false， 会触发中断后续的业务逻辑；
+        //2. 返回string，会触发中断后续的业务逻辑，一般多用于返回页面的HTML；
+        //3. 返回array， 会继续执行后续的业务逻辑，一般多用于返回无头浏览器选项参数；
+        //4. 返回其他，  会继续执行后续的业务逻辑，相当于是什么也没有发生；
+
+        //注意：一般无需调用如下几行代码，因为爬山虎内部默认会自动调用无头API做同样的工作.
+        //$page->navigate($url)->waitForNavigation('firstMeaningfulPaint');
+        //$html = $page->getHtml();
+        //return $html;
     }
 }
 ```
