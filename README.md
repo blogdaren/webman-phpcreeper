@@ -2,10 +2,10 @@
 
 webman的爬山虎插件，[PHPCreeper | 爬山虎](https://github.com/blogdaren/PHPCreeper)：让爬取工作变得更加简单高效。
 
-
 ## 更新
-* 本插件的使用说明最近一次更新时间是：**2024-04-27**，由于爬山虎迭代版新增了许多新特性和API，而且完全向下兼容，所以建议将本插件和爬山虎引擎更新到最新版。
-* 重大更新：自**爬山虎v1.8.7版本**开始，爬山虎已经支持无头浏览器即支持运行JavaScript代码及其渲染的动态页面。使用非常简单，无缝切换，只需要通过$context上下文启用或禁用无头浏览器开关即可。
+
+* 本插件的使用说明最近一次更新时间是：`2024-04-28`，由于爬山虎迭代版新增了许多新特性和API，而且完全向下兼容，所以建议将本插件更新至最新版（v1.0.4），同时确保将爬山虎同步更新至最新版（v1.8.7）。
+* 重大更新：自爬山虎`v1.8.7`开始，爬山虎开始支持无头浏览器即支持运行JavaScript代码及其渲染的动态页面。使用非常简单，无缝切换，只需要通过`$context`上下文启用或禁用无头浏览器开关即可。
 
 
 ## 安装
@@ -20,7 +20,7 @@ composer require blogdaren/webman-phpcreeper
 * 首先在自己的app项目下手动创建有效的爬虫目录, 比如：app/spider。
 * 然后在爬虫目录内(app/spider)创建相应的容器句柄类Hanlder。
 * 最后在对应容器内的`onXXXX`回调方法内编写业务逻辑。
-* 若启用无头开关，默认使用无头chrome驱动，否则使用默认的guzzle驱动，若爬取的不是动态页，建议禁用。
+* 若启用无头开关，默认使用无头chrome驱动，反之使用默认的guzzle驱动，若爬取的不是动态页，建议禁用。
 
 ## 举个例子
 
@@ -33,7 +33,7 @@ composer require blogdaren/webman-phpcreeper
 2、创建生产器句柄类文件：app/spider/Myproducer.php
 
 ```php
-<?php 
+<?php
 /**
  * @script   Myproducer.php
  * @brief    生产器Handler
@@ -51,13 +51,13 @@ class Myproducer extends \Webman\PHPCreeper\Producer
     /**
      * @brief   生产任务
      *
-     * @return  mixed 
+     * @return  mixed
      */
     public function makeTask()
-    {   
-        //注意：本方法中所说的版本并不是webman爬山虎插件的版本，而是爬山虎的版本.
-        //注意：本方法中所说的版本并不是webman爬山虎插件的版本，而是爬山虎的版本.
-        //注意：本方法中所说的版本并不是webman爬山虎插件的版本，而是爬山虎的版本.
+    {
+        //注意：这里说的版本并不是webman爬山虎插件的版本，而是爬山虎的版本.
+        //注意：这里说的版本并不是webman爬山虎插件的版本，而是爬山虎的版本.
+        //注意：这里说的版本并不是webman爬山虎插件的版本，而是爬山虎的版本.
 
         //在v1.6.0之前，爬山虎主要使用OOP风格的API来创建任务：
         //$producer->newTaskMan()->setXXX()->setXXX()->createTask()
@@ -86,7 +86,7 @@ class Myproducer extends \Webman\PHPCreeper\Producer
             //在特定的生命周期内是否允许重复抓取同一个URL资源（可选项，默认false）
             'allow_url_repeat' => true,
             //要不要跟踪完整的HTTP请求参数，开启后终端会显示完整的请求参数 [默认false]
-            'track_request_args' => true,  
+            'track_request_args' => true,
             //要不要跟踪完整的TASK数据包，开启后终端会显示完整的任务数据包 [默认false]
             'track_task_package' => true,
             //在v1.6.0之前，如果rulename留空，默认会使用 md5($task_url)作为rulename
@@ -101,24 +101,21 @@ class Myproducer extends \Webman\PHPCreeper\Producer
                 //'domain' => 'domain.com',
                 //'k1' => 'v1',
                 //'k2' => 'v2',
-            ],  
+            ],
             //除了内置参数之外，还可以自由配置自定义参数，在上下游业务链应用场景中十分有用
             'user_define_arg1' => 'user_define_value1',
             'user_define_arg2' => 'user_define_value2',
             //无头浏览器，如果是动态页面考虑启用，否则应当禁用 [默认使用chrome且为禁用状态]
-            'headless_browser' => [
-                'headless' => false, 
-            ],
-            //更多参数请参看手册
+            'headless_browser' => ['headless' => false, /*更多其他无头参数*/],
+            //更多其他上下文参数详见官方手册
         );
-
 
         $task = array(
             'active' => true,       //是否激活当前任务，只有配置为false才会冻结任务，默认true
             'url'    => 'http://www.weather.com.cn/weather/101010100.shtml',
             "rule" => array(        //如果该字段留空默认将返回原始下载数据
                 '日子' => ['div#7d ul.t.clearfix h1',      'text', [], 'function($field_name, $data){
-                    return  date("Y-m-d") . " | " . $data;
+                    return  date("Y-m-d") . " | " . $data; 
                 }'],                //关于回调字符串的用法务必详看官方手册
                 '天气'  => ['div#7d ul.t.clearfix p.wea',   'text'],
                 '温度'  => ['div#7d ul.t.clearfix p.tem',   'text'],
@@ -127,14 +124,40 @@ class Myproducer extends \Webman\PHPCreeper\Producer
             'refer'     =>  '',
             'type'      =>  'text', //可以自由设定类型
             'method'    =>  'get',
-            'context'   =>  $private_task_context, //任务私有context，其上下文成员与全局context完全相同，最终会采用合并覆盖策略
+            'context'   =>  $private_task_context,
         );
 
         $this->createTask($task);
-    }  
+    }
 
     /**
-     * @brief    onProducerStart  
+     * @brief    使用无头浏览器爬JavaScript渲染的取动态页面
+     *
+     * @return   mixed
+     */
+    public function makeDynamicTask()
+    {
+        $private_task_context = [
+            //是否缓存下载数据(可选项，默认false)
+            'cache_enabled'   => true,
+            //缓存下载数据存放目录  (可选项，默认位于系统临时目录下)
+            'cache_directory' => sys_get_temp_dir() . '/DownloadCache4PHPCreeper/',
+            'headless_browser' => ['headless' => true, /*更多其他无头参数*/],
+        ];
+
+        $dynamic_task = array(
+            'url' => "https://www.toutiao.com",
+            'rule' => array(
+                '今日头条热榜标题' => ['div.show-monitor ol li a', 'aria-label'],
+            ), 
+            'context' => $private_task_context,
+        );
+
+        $this->createTask($dynamic_task);
+    }
+
+    /**
+     * @brief    onProducerStart
      *
      * @param    object $producer
      *
@@ -143,6 +166,7 @@ class Myproducer extends \Webman\PHPCreeper\Producer
     public function onProducerStart($producer)
     {
         $this->makeTask();
+        $this->makeDynamicTask();
 
         //使用Timer定时器创建任务
         //Timer::add(5, [$this, "makeTask"], [], true);
@@ -165,7 +189,7 @@ class Myproducer extends \Webman\PHPCreeper\Producer
     }
 
     /**
-     * @brief    onProducerReload     
+     * @brief    onProducerReload
      *
      * @param    object $producer
      *
@@ -174,9 +198,7 @@ class Myproducer extends \Webman\PHPCreeper\Producer
     public function onProducerReload($producer)
     {
     }
-
 }
-
 ```
 
 3、创建下载器句柄类文件：app/spider/Mydownloader.php
