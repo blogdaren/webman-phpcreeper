@@ -142,6 +142,7 @@ class Myproducer extends \Webman\PHPCreeper\Producer
             'cache_enabled'   => true,
             //缓存下载数据存放目录  (可选项，默认位于系统临时目录下)
             'cache_directory' => sys_get_temp_dir() . '/DownloadCache4PHPCreeper/',
+            /无头浏览器，如果是动态页面考虑启用，否则应当禁用 [默认使用chrome且为禁用状态]
             'headless_browser' => ['headless' => true, /*更多其他无头参数*/],
         ];
 
@@ -149,6 +150,7 @@ class Myproducer extends \Webman\PHPCreeper\Producer
             'url' => "https://www.toutiao.com",
             'rule' => array(
                 '今日头条热榜标题' => ['div.show-monitor ol li a', 'aria-label'],
+                '今日头条热榜链接' => ['div.show-monitor ol li a', 'href'],
             ), 
             'context' => $private_task_context,
         );
