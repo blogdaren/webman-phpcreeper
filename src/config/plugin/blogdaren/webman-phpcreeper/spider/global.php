@@ -29,12 +29,14 @@ if(is_file($db_config_file) && file_exists($db_config_file))
     $db_config = require($db_config_file);
 }
 
-$global_config = [
-    'main'      =>  $main_config,
-    'database'  =>  $db_config,
-];
+/*
+ *$global_config = [
+ *    'main'      =>  $main_config,
+ *    'database'  =>  $db_config,
+ *];
+ */
 
-return $global_config;
+return array_merge($main_config, $db_config);
 
 
 /** !!! hey, don't try to modify this file unless you understand what u are doing !!! **/
