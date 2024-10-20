@@ -4,7 +4,7 @@ webman的爬山虎插件，[PHPCreeper | 爬山虎](https://github.com/blogdaren
 
 ## 更新
 
-* 本插件的使用说明最近一次更新时间是：`2024-05-23`，由于爬山虎迭代版新增了许多新特性和API，而且完全向下兼容，所以建议将本插件更新至最新版（v1.0.5），同时确保将爬山虎同步更新至最新版（v1.8.7）。
+* 本插件的使用说明最近一次更新时间是：`2024-10-20`，由于爬山虎迭代版新增了许多新特性和API，而且完全向下兼容，所以建议将本插件更新至最新版`v1.0.6`，同时确保将爬山虎同步更新至最新版`v1.9.6`。
 * 重大更新：自爬山虎`v1.8.7`开始，爬山虎开始支持无头浏览器即支持运行JavaScript代码及其渲染的动态页面。使用非常简单，无缝切换，只需要通过`$context`上下文启用或禁用无头浏览器开关即可。
 
 
@@ -17,7 +17,7 @@ composer require blogdaren/webman-phpcreeper
 * 首先要明确一个概念：爬山虎有三种容器分别是：生产器、下载器、解析器。
 * 编写一个爬虫非常简单: 配置搞定以后，只需要在对应容器内的`onXXXX`回调方法内编写业务逻辑即可。
 * 由于爬虫应用相对WEB应用而言比较独立，所以app内的爬虫目录结构建议自行独立部署。
-* 首先在自己的app项目下手动创建有效的爬虫目录, 比如：app/spider。
+* 首先在自己的app项目下手动创建有效的爬虫目录，比如：app/spider。
 * 然后在爬虫目录内(app/spider)创建相应的容器句柄类Hanlder。
 * 最后在对应容器内的`onXXXX`回调方法内编写业务逻辑。
 * 若启用无头开关，默认使用无头chrome驱动，反之使用默认的guzzle驱动，若爬取的不是动态页，建议禁用。
@@ -254,6 +254,18 @@ class Mydownloader extends \Webman\PHPCreeper\Downloader
     }
 
     /**
+     * @brief    onDownloaderConnectToParser    
+     *
+     * @param    object $connection
+     *
+     * @return   mixed
+     */
+    public function onDownloaderConnectToParser ($connection)
+    {
+        //$connection->bufferFull = true;
+    }
+
+    /**
      * @brief    onDownloaderMessage
      *
      * @param    object $downloader
@@ -478,7 +490,7 @@ return [
 * 按照规范每一个独立的容器实例最好对应唯一的一个Handler;
 
 
-## 爬山虎技术文档
+## 爬山虎开发文档
 * 爬山虎中文官方网站：[http://www.phpcreeper.com](http://www.phpcreeper.com)
 * 中文开发文档主节点：[http://www.blogdaren.com/docs/](http://www.blogadren.com/docs/)
 * 中文开发文档备节点：[http://www.phpcreeper.com/docs/](http://www.phpcreeper.com/docs/)
