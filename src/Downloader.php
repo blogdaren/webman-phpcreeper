@@ -20,6 +20,7 @@ class Downloader extends \PHPCreeper\Downloader
         'onStartDownload',
         'onAfterDownload',
         'onFailDownload',
+        'onDownloaderConnectToParser',
         'onDownloaderMessage',
         'onDownloaderReload',
         'onDownloaderStart',
